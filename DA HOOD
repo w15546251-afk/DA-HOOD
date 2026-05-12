@@ -109,11 +109,11 @@ local function IsVisible(part)
     
     local params = RaycastParams.new()
     params.FilterType = Enum.RaycastFilterType.Exclude
-    params.FilterDescendantsInstances = {LP.Character, Cam, char} -- Ignore yourself, camera, and the target themselves
+    params.FilterDescendantsInstances = {LP.Character, Cam, char} 
     params.IgnoreWater = true
     
     local result = workspace:Raycast(rayOrigin, rayDirection, params)
-    return result == nil -- If nil, nothing hit the ray (Target is visible)
+    return result == nil 
 end
 
 local frameCount = 0
@@ -133,7 +133,8 @@ RunService.RenderStepped:Connect(function(dt)
         local root = char and char:FindFirstChild("HumanoidRootPart")
         local hum = char and char:FindFirstChildOfClass("Humanoid")
 
-        if (Settings.TeamCheck and p.Team == LP.Team) or (Settings.FriendCheck and LP:IsFriendsWith(p.UserId)) or not char or not hum or hum.Health <= 0 or not root then 
+        -- TARGETING EXCLUSION (IGRE DOWNED/RAGDOLLED)
+        if (Settings.TeamCheck and p.Team == LP.Team) or (Settings.FriendCheck and LP:IsFriendsWith(p.UserId)) or not char or not hum or hum.Health <= 15 or not root then 
             ClearDraws(p)
             if char and char:FindFirstChild("EliteCham") then char.EliteCham.Enabled = false end
             continue 
@@ -189,7 +190,6 @@ RunService.RenderStepped:Connect(function(dt)
 
                 local sDist = (Vector2.new(pos.X, pos.Y) - center).Magnitude
                 if sDist < minDistance then 
-                    -- Apply Wall Check to Targeting
                     if not Settings.WallCheck or IsVisible(head) then
                         minDistance = sDist; target = head
                     end
